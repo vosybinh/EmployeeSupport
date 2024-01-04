@@ -1,0 +1,110 @@
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Thực Đơn Nhà Hàng</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4s.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	
+$(document).ready(function() {
+    $("#add_new_customer").submit(function(evt) {
+        evt.preventDefault();
+
+        // PREPARE FORM DATA
+        let formData = {
+            code : $("#code").val(),
+            name :  $("#name").val(),
+            price: $("#price").val(),
+            fileData: $("#fileData")[0].files
+        }
+
+        $.ajax({
+            url: '/admin/product1',
+            type: 'POST',
+            contentType : false,
+            data: formData,
+            async: false,
+            cache: false,
+            success: function (response) {
+                let product = response.products[0];
+                let productString = "{ Mã Món ĂN: " + product.code + " tên món ăn" + product.name + 
+                                            ", giá món ăn: " + product.price + " }"
+                let successAlert = '<div class="alert alert-success alert-dismissible">' + 
+                                        '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                        '<strong>' + response.message + '</strong> Product\'s Info = ' + productString;
+                                    '</div>'
+                $("#response").append(successAlert);
+                $("#response").css({"display": "block"});
+
+                resetUploadForm();
+            },
+            error: function (response) {
+                let errorAlert = '<div class="alert alert-danger alert-dismissible">' + 
+                                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                    '<strong>' + response.message + '</strong>' + ' ,Error: ' + message.error + 
+                                '</div>'
+                $("#response").append(errorAlert);
+                $("#response").css({"display": "block"});
+
+                resetUploadForm();
+            }
+        });
+    });
+
+    function resetUploadForm(){
+        $("#code").val("");
+        $("#name").val("");
+        $("#price").val("");
+        $("#fileData").val("");
+    }
+
+});
+
+
+</script>
+</head>
+<body>
+	<div class="container">
+		<ul class="nav nav-pills">
+			<li class="nav-item">
+				<a class="nav-link" href="/">Tạo Món Ăn</a>
+			</li>
+		
+		</ul>
+		<div class="row">
+			<div class="col-sm-7" style="background-color:#e6fffa; padding:10px; border-radius:3px">
+				<h3>Tạo Món Ăn</h3>
+				<form id="add_new_customer">
+					<div class="form-group">
+						<label class="control-label" for="code">Mã Món Ăn</label>
+						<input type="text" class="form-control" id="code"
+								placeholder="Enter First Name" name="code" required></input>
+                    </div>
+					<div class="form-group">
+						<label class="control-label" for="tenmonan">Tên Món Ăn</label>
+						<input type="text" class="form-control" id="name"
+								placeholder="Enter Last Name" name="name" required></input>
+					</div>                    
+					<div class="form-group">
+						<label class="control-label" for="gia">Giá</label>
+						<input type="text" class="form-control" id="price"
+								placeholder="Enter Address" name="price" required></input>
+					</div>                    
+					<div class="form-group">
+						<label class="control-label" for="uploadImage">Upload Hình Ảnh </label>
+						<input type="file" class="form-control-file" id="fileData"
+								placeholder="Enter Age" name="fileData" required></input>
+					</div>                    
+					<button type="submit" class="btn btn-danger" id="btn-add-new-customer">Submit</button>
+				</form>
+				<div id="response" style="display:none; margin-top:10px">
+				</div>
+			</div>
+		</div>
+		<hr>		
+	</div>
+</body>
+</html>
